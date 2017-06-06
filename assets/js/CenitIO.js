@@ -76,7 +76,7 @@
                 },
 
                 error: function (jqXHR, textStatus, errorThrown) {
-                    callback("Request failed ({0}), data can't be saved.".format(errorThrown));
+                    callback("Request failed ({0}), data can't be saved.".format(errorThrown || textStatus));
                 }
             });
         },
@@ -107,7 +107,7 @@
                 },
 
                 error: function (jqXHR, textStatus, errorThrown) {
-                    callback("Request failed ({0}), data type record can't be obtained.".format(errorThrown));
+                    callback("Request failed ({0}), data type record can't be obtained.".format(errorThrown || textStatus));
                 }
             });
         },
@@ -144,7 +144,7 @@
                 },
 
                 error: function (jqXHR, textStatus, errorThrown) {
-                    callback("Request failed ({0}), data type record can't be created.".format(errorThrown));
+                    callback("Request failed ({0}), data type record can't be created.".format(errorThrown || textStatus));
                 }
             });
         },

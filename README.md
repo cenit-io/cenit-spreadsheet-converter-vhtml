@@ -14,9 +14,9 @@ your form to your CenitIO Tenant.
 git clone cenit-io/cenit-spreadsheet-converter-vhtml
 ```
 
-2. Copy **assets/js/jquery-3.2.1.min.js** and **assets/js/CenitIO.js** to **assets/js** folder in you application.
+2. Copy **assets/js/jquery-3.2.1.min.js** and **assets/js/CenitIO.Controler.js** to **assets/js** folder in you application.
 
-3. Add **jQuery v3.2.1** to head section and **CenitIO.js** connection before close html tag and after include **app.min.js** 
+3. Add **jQuery v3.2.1** to head section and **CenitIO.Controler.js** connection before close html tag and after include **app.min.js** 
 in the html application file **combochartex.htm** as this snippet code:
  
 ```html
@@ -29,24 +29,37 @@ in the html application file **combochartex.htm** as this snippet code:
   <!-- ORIGINAL CODE SECTION -->
 </body>
   <script type="text/javascript" src="assets/js/app.min.js"></script>
-  <script type="text/javascript" src="assets/js/CenitIO.js"></script>
+  <script type="text/javascript" src="assets/js/CenitIO.Controler.js"></script>
 </html>
 ```
  
-4. Setting CenitIO connection parameters in to **assets/js/CenitIO.js**. As this snippet code:
+4. Setting CenitIO connection parameters in to **assets/js/CenitIO.Config.js**. As this snippet code:
 
 ```javascript
-    var CenitIO = {
-
-        baseApiUrl: "https://cenit.io/api/v2",
-        dataTypeName: "combobox_test",
-        dataTypeNamespace: "Services",
-        userAccessKey: "**********",
-        userAccessToken: "********************",
-     
-        // .... //
-     }
+  var CenitIO = {
+      baseApiUrl: "https://cenit.io/api/v2",
+      dtName: "combobox_test",
+      dtNamespace: "DataService",
+      dtNamespaceSlug: null,
+      token: null
+  };
 ```
+
+#### Parameters description:
+
+* **baseApiUrl:**       (REQUIRED) Base URL to CenitIO API.
+* **dtName:**           (REQUIRED) Data type name.
+* **dtNamespace:**      (REQUIRED) Data type namespace.
+* **dtNamespaceSlug:**  (OPTIONAL) Data type namespace slug. If dtNamespaceSlug value is undefined, null or false, 
+                                   then will be requested in the submit action.
+* **token:**            (OPTIONAL) Authorisation token. If token value is undefined, null or false, then will be 
+                                   prompted in the submit action.
+                                  
+### Get authorisation token from CenitIO:
+
+...
+
+### Conclusion
 
 You are done now, you have configured the SpreadsheetConverter offline cache calculator app to your CenitIO Tenant 
 to persist your form.

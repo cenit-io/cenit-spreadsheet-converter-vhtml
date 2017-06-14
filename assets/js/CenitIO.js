@@ -2,11 +2,11 @@
 
     var CenitIO = {
 
-        baseApiUrl: "https://cenit.io/api/v2",
-        dataTypeName: "combobox_test",
-        dataTypeNamespace: "Services",
-        tenantAccessKey: "**********",
-        tenantAccessToken: "********************",
+        baseApiUrl: "https://cenit.io/api/v2",      // REQUIRED: Base URL to CenitIO API.
+        dtName: "combobox_test",                    // REQUIRED: Data type name.
+        dtNamespace: "DataService",                 // REQUIRED: Data type namespace.
+        dtNamespaceSlug: null,                      // OPTIONAL: Data type namespace slug, default value is dtNamespace in underscore case.
+        token: null,                                // OPTIONAL: Authorisation token. Prompt on submit if value is null or false.
 
         /**
          * Init process to send form data to CenitIO platform.
@@ -22,20 +22,24 @@
             vThis.validate(function (err) {
                 if (err) return callback(500, err);
 
-                var taKey = vThis.tenantAccessKey.trim(),
-                    taToken = vThis.tenantAccessToken.trim(),
-                    dtName = vThis.dataTypeName.trim(),
-                    dtNamespace = vThis.dataTypeNamespace.trim(),
+                var token = (vThis.token || vThis.getToken()).trim(),
+                    dtName = vThis.dtName.trim(),
+                    dtNamespace = vThis.dtNamespace.trim(),
+                    dtNamespaceSlug = (vThis.dtNamespaceSlug || dtNamespace.toUnderscoreCase()).trim(),
                     baUrl = vThis.baseApiUrl.trim().replace(/\/$/, '');
 
-                vThis.getDataType(baUrl, taKey, taToken, dtNamespace, dtName, function (err, dataType) {
+                vThis.token = token;
+
+                vThis.getDataType(baUrl, token, dtNamespace, dtName, function (err, dataType) {
                     if (err) return callback(500, err);
                     if (dataType) {
-                        vThis.saveDataInDataType(baUrl, taKey, taToken, dataType, formData, callback);
+                        dataType.namespaceSlug = dtNamespaceSlug;
+                        vThis.saveDataInDataType(baUrl, token, dataType, formData, callback);
                     } else {
-                        vThis.createDataType(baUrl, taKey, taToken, dtNamespace, dtName, formData, function (err, dataType) {
+                        vThis.createDataType(baUrl, token, dtNamespace, dtName, formData, function (err, dataType) {
                             if (err) return callback(500, err);
-                            vThis.saveDataInDataType(baUrl, taKey, taToken, dataType, formData, callback);
+                            dataType.namespaceSlug = dtNamespaceSlug;
+                            vThis.saveDataInDataType(baUrl, token, dataType, formData, callback);
                         });
                     }
                 });
@@ -46,16 +50,15 @@
          * Send form data to CenitIO platform.
          *
          * @param baUrl {String} Base URL to CenitIO API.
-         * @param taKey {String} CenitIO tenant access key.
-         * @param taToken {String} CenitIO tenant access token.
+         * @param token {String} CenitIO application authorization token.
          * @param dataType {Object} Data type record.
          * @param formData {Object} Form data to be seved.
          * @param callback {Function} Callback function with status and menssage response parameters.
          */
-        saveDataInDataType: function (baUrl, taKey, taToken, dataType, formData, callback) {
+        saveDataInDataType: function (baUrl, token, dataType, formData, callback) {
             $.ajax({
-                url: '{0}/{1}/{2}.json'.format(baUrl, dataType.namespace.toLowerCase(), dataType.slug),
-                headers: this.headers(taKey, taToken),
+                url: '{0}/{1}/{2}.json'.format(baUrl, dataType.namespaceSlug, dataType.slug),
+                headers: this.headers(token),
                 method: 'POST',
                 dataType: 'json',
                 crossOrigin: true,
@@ -76,7 +79,7 @@
                 },
 
                 error: function (jqXHR, textStatus, errorThrown) {
-                    callback("Request failed ({0}), data can't be saved.".format(errorThrown || textStatus));
+                    callback(500, "Request failed ({0}), data can't be saved.".format(errorThrown || textStatus));
                 }
             });
         },
@@ -85,23 +88,21 @@
          * Search and return data type record with given name and namespace.
          *
          * @param baUrl {String} Base URL to CenitIO API.
-         * @param taKey {String} CenitIO tenant access key.
-         * @param taToken {String} CenitIO tenant access token.
+         * @param token {String} CenitIO application authorization token.
          * @param dtNamespace {String} Data type namespace.
          * @param dtName {String} Data type name.
          * @param callback {Function} Callback function with error and data type record parameters.
          */
-        getDataType: function (baUrl, taKey, taToken, dtNamespace, dtName, callback) {
+        getDataType: function (baUrl, token, dtNamespace, dtName, callback) {
             $.ajax({
                 url: '{0}/setup/json_data_type.json'.format(baUrl),
-                headers: this.headers(taKey, taToken),
+                headers: this.headers(token),
                 method: 'GET',
                 dataType: 'json',
                 crossOrigin: true,
                 data: { limit: 1, namespace: dtNamespace, name: dtName },
 
                 success: function (resData, textStatus, jqXHR) {
-                    console.log(1, resData);
                     if (resData.summary) return callback(resData.summary);
                     callback(null, resData.json_data_types[0]);
                 },
@@ -116,19 +117,18 @@
          * Create and return data type record with given name and namespace.
          *
          * @param baUrl {String} Base URL to CenitIO API.
-         * @param taKey {String} CenitIO tenant access key.
-         * @param taToken {String} CenitIO tenant access token.
+         * @param token {String} CenitIO application authorization token.
          * @param dtNamespace {String} Data type namespace.
          * @param dtName {String} Data type name.
          * @param formData {Object} Form data to be seved.
          * @param callback {Function} Callback function with error and data type record parameters.
          */
-        createDataType: function (baUrl, taKey, taToken, dtNamespace, dtName, formData, callback) {
+        createDataType: function (baUrl, token, dtNamespace, dtName, formData, callback) {
             var schema = this.parseJsonSchema(formData);
 
             $.ajax({
                 url: '{0}/setup/json_data_type.json'.format(baUrl),
-                headers: this.headers(taKey, taToken),
+                headers: this.headers(token),
                 method: 'POST',
                 dataType: 'json',
                 crossOrigin: true,
@@ -214,10 +214,9 @@
                     return typeof v == 'String' && v.trim() != ''
                 };
 
-            if (isValid(this.tenantAccessKey)) return callback(errMsg.format('tenantAccessKey'));
-            if (isValid(this.tenantAccessToken)) return callback(errMsg.format('tenantAccessToken'));
-            if (isValid(this.dataType)) return callback(errMsg.format('dataType'));
             if (isValid(this.baseApiUrl)) return callback(errMsg.format('baseApiUrl'));
+            if (isValid(this.dtName)) return callback(errMsg.format('dtName'));
+            if (isValid(this.dtNamespace)) return callback(errMsg.format('dtNamespace'));
 
             callback();
         },
@@ -225,15 +224,13 @@
         /**
          * Returns headers to be sent in CenitIO request.
          *
-         * @param taKey {String} CenitIO tenant access key.
-         * @param taToken {String} CenitIO tenant access token.
+         * @param token {String} CenitIO application authorization token.
          * @returns {{Content-Type: string, X-Tenant-Access-Key: *, X-Tenant-Access-Token: *}}
          */
-        headers: function (taKey, taToken) {
+        headers: function (token) {
             return {
                 'Content-Type': 'application/json',
-                'X-Tenant-Access-Key': taKey,
-                'X-Tenant-Access-Token': taToken
+                'Authorization': 'Bearer {0}'.format(token)
             };
         },
 
@@ -251,6 +248,10 @@
                 '<script type="text/javascript">setTimeout(function () { window.location = "/" }, 5000)</script>';
 
             return tmpl.format(status == 500 ? 'red' : '#c9e2b3', msg.toString());
+        },
+
+        getToken: function () {
+            return prompt('Authorization token:');
         }
 
     };
@@ -280,6 +281,13 @@
 
             return args[index];
         });
+    };
+
+    String.prototype.toUnderscoreCase = function () {
+        return this.replace(/(?:^|\.?)([A-Z])/g, function (x, y) {
+                return "_" + y.toLowerCase()
+            }
+        ).replace(/^_/, "");
     };
 
 

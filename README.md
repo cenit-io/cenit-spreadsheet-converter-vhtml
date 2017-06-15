@@ -27,12 +27,12 @@ git clone cenit-io/cenit-spreadsheet-converter-vhtml
   
   <!-- Components to integration with CenitIO -->
   
-<link type="text/css" rel="stylesheet" href="assets/CenitIO/css/select2.min.css"/>
-<link type="text/css" rel="stylesheet" href="assets/CenitIO/css/main.css"/>
-
-<script type="text/javascript" src="assets/CenitIO/js/select2.min.js"></script>
-<script type="text/javascript" src="assets/CenitIO/js/Config.js"></script>
-<script type="text/javascript" src="assets/CenitIO/js/Controller.js"></script>
+  <link type="text/css" rel="stylesheet" href="assets/CenitIO/css/select2.min.css"/>
+  <link type="text/css" rel="stylesheet" href="assets/CenitIO/css/main.css"/>
+  
+  <script type="text/javascript" src="assets/CenitIO/js/select2.min.js"></script>
+  <script type="text/javascript" src="assets/CenitIO/js/Config.js"></script>
+  <script type="text/javascript" src="assets/CenitIO/js/Controller.js"></script>
 </html>
 ```
  

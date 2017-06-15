@@ -84,7 +84,35 @@ git clone cenit-io/cenit-spreadsheet-converter-vhtml
                              
 ### Get authorisation token from CenitIO:
 
-...
+1. Define the CenitIO [application](https://cenit.io/application) that will contain the authorizations. 
+
+    **Example values:**
+
+        Namespace: DataService
+        
+        Name: SpreadsheetFormData
+
+2. Define the OAuth2 [authorization](https://cenit.io/oauth2_authorization) that will contain the authorizations scopes. 
+
+   **Example values:**
+
+        Namespace: DataService
+        
+        Name: SpreadsheetFormData
+        
+        Client: DataService | SpreadsheetFormData [App]
+        
+        Scopes: Cenit | OAuth [Build-In] | {{scope}} [Build-In]
+        
+        Template parameters: 
+        
+            Name: scope 
+            
+            Value: create {"namespace":"Setup", "name": "JsonDataType"} create {"namespace":"DataService"} read
+
+3. Generate token using the **Authorize** action.
+
+4. Copy the **Access token** and set in **assets/CenitIO/js/Config.js** of SpreadsheetConverter jQuery adaptor.
 
 ### Conclusion
 

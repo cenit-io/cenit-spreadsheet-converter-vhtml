@@ -112,7 +112,7 @@ git clone cenit-io/cenit-spreadsheet-converter-vhtml
 
 3. Generate token using the **Authorize** action.
 
-4. Copy the **Access token** and set in **assets/CenitIO/js/Config.js** of SpreadsheetConverter jQuery adaptor.
+4. Copy the **Access token** and set it in **assets/CenitIO/js/Config.js** of SpreadsheetConverter jQuery adaptor.
 
 ### Conclusion
 

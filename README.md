@@ -14,26 +14,29 @@ your form to your CenitIO Tenant.
 git clone cenit-io/cenit-spreadsheet-converter-vhtml
 ```
 
-2. Copy **assets/js/jquery-3.2.1.min.js** and **assets/js/CenitIO.Controler.js** to **assets/js** folder in you application.
+2. Copy **assets/CenitIO** folder to **assets** folder in you application.
 
-3. Add **jQuery v3.2.1** to head section and **CenitIO.Controler.js** connection before close html tag and after include **app.min.js** 
-in the html application file **combochartex.htm** as this snippet code:
+3. Add **Select2** and **CenitIO** components before close html tag and after include **app.min.js** in the 
+   html application file **combochartex.htm** as this snippet code:
  
 ```html
 <html manifest="offline.appcache">
-<head>
-  <!-- ORIGINAL CODE SECTION -->
-  <script type="text/javascript" src="assets/js/jquery-3.2.1.min.js"></script>
-</head>
-<body>
   <!-- ORIGINAL CODE SECTION -->
 </body>
   <script type="text/javascript" src="assets/js/app.min.js"></script>
-  <script type="text/javascript" src="assets/js/CenitIO.Controler.js"></script>
+  
+  <!-- Components to integration with CenitIO -->
+  
+<link type="text/css" rel="stylesheet" href="assets/CenitIO/css/select2.min.css"/>
+<link type="text/css" rel="stylesheet" href="assets/CenitIO/css/main.css"/>
+
+<script type="text/javascript" src="assets/CenitIO/js/select2.min.js"></script>
+<script type="text/javascript" src="assets/CenitIO/js/Config.js"></script>
+<script type="text/javascript" src="assets/CenitIO/js/Controller.js"></script>
 </html>
 ```
  
-4. Setting CenitIO connection parameters in to **assets/js/CenitIO.Config.js**. As this snippet code:
+4. Setting CenitIO connection parameters in to **assets/js/Config.js**. As this snippet code:
 
 ```javascript
   var CenitIO = {

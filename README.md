@@ -77,7 +77,7 @@ git clone cenit-io/cenit-spreadsheet-converter-vhtml
 * **selectionItems:**   (OPTIONAL) Configuration of items that will be transformed in select box components. The name of 
                                    each element setting must be the value of the id attribute of the field in the form.
 * **apiService:**       (REQUIRED) Url to REST API service in CenitIO. It is (Namespace slug/Model slug).
-* **rField:**           (REQUIRED) Attribute name that contain the records.
+* **rField:**           (REQUIRED) Attribute name that contain the records. Usually it is the resource name pluralization.
 * **vField:**           (REQUIRED) Record attribute use to get option value.
 * **lField:**           (REQUIRED) Record attribute use to get option label.
                              

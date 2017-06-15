@@ -10,7 +10,7 @@ var CenitIO = {
     selectionItems: {                           // OPTIONAL
         XLEW_1_6_2: {
             apiService: "data_service/data1",   // REQUIRED: Url to REST API service in CenitIO. It is (Namespace slug/Model slug).
-            rField: "data1s",                   // REQUIRED: Attribute name that contain the records.
+            rField: "data1s",                   // REQUIRED: Attribute name that contain the records. Usually it is the resource name pluralization.
             vField: "ci",                       // REQUIRED: Record attribute use to get option value.
             lField: "name"                      // REQUIRED: Record attribute use to get option label.
         }

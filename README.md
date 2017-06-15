@@ -36,7 +36,7 @@ git clone cenit-io/cenit-spreadsheet-converter-vhtml
 </html>
 ```
  
-4. Setting CenitIO connection parameters in to **assets/js/Config.js**. As this snippet code:
+4. Setting CenitIO connection parameters in to **assets/CenitIO/js/Config.js**. As this snippet code:
 
 ```javascript
   var CenitIO = {
@@ -44,7 +44,23 @@ git clone cenit-io/cenit-spreadsheet-converter-vhtml
       dtName: "combobox_test",
       dtNamespace: "DataService",
       dtNamespaceSlug: null,
-      token: null
+      token: null,
+      
+      // Setting of the selection items.
+      selectionItems: {                           
+          field_name_1: {                           
+              apiService: "data_service/data1",
+              rField: "data1s",
+              vField: "id",
+              lField: "name"
+          },
+          field_name_2: {                           
+              apiService: "data_service/data2",
+              rField: "data2s",
+              vField: "value",
+              lField: "displey_name"
+          }
+      }
   };
 ```
 
@@ -58,6 +74,14 @@ git clone cenit-io/cenit-spreadsheet-converter-vhtml
 * **token:**            (OPTIONAL) Authorisation token. If token value is undefined, null or false, then will be 
                                    prompted in the submit action.
                                   
+* **selectionItems:**   (OPTIONAL) Configuration of items that will be transformed in select box components. The name of 
+                                   each element setting must be the value of the id attribute of the field in the form.
+* **apiService:**       (REQUIRED) Url to REST API service in CenitIO. It is (Namespace slug/Model slug).
+* **rField:**           (REQUIRED) Attribute name that contain the records.
+* **vField:**           (REQUIRED) Record attribute use to get option value.
+* **lField:**           (REQUIRED) Record attribute use to get option label.
+                             
+                             
 ### Get authorisation token from CenitIO:
 
 ...

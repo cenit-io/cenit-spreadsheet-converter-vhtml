@@ -46,19 +46,24 @@ git clone cenit-io/cenit-spreadsheet-converter-vhtml
       dtNamespaceSlug: null,
       token: null,
       
-      // Setting of the selection items.
       selectionItems: {                           
-          field_name_1: {                           
-              apiService: "data_service/data1",
-              rField: "data1s",
-              vField: "id",
-              lField: "name"
+          field_name_1: { 
+              remote: {
+                  apiService: "data_service/data1",
+                  rField: "data1s",
+                  vField: "id",
+                  lField: "name"
+              }
           },
-          field_name_2: {                           
-              apiService: "data_service/data2",
-              rField: "data2s",
-              vField: "value",
-              lField: "displey_name"
+          field_name_2: {
+              options: [                          
+                  { value: 1, label: 'A' },
+                  { value: 2, label: 'B' },
+                  { value: 3, label: 'C' },
+              ]
+          },
+          field_name_3: {
+              options: ['yes', 'no']
           }
       }
   };
@@ -76,6 +81,14 @@ git clone cenit-io/cenit-spreadsheet-converter-vhtml
                                   
 * **selectionItems:**   (OPTIONAL) Configuration of items that will be transformed in select box components. The name of 
                                    each element setting must be the value of the id attribute of the field in the form.
+                                   The value can be the configuration to obtain the options from a remote service of 
+                                   CenitIO or it can be the list of options.
+                                   
+* **options:**          (OPTIONAL) List (array) of static options. Each option can be an object if value is different to 
+                                   label such as ``{ value: '1', label: 'A' }``, or a single value if it is equal to label.
+                                   
+* **remote:**           (OPTIONAL) Configuration to obtain the options from a remote service of CenitIO.
+
 * **apiService:**       (REQUIRED) Url to REST API service in CenitIO. It is (Namespace slug/Model slug).
 * **rField:**           (REQUIRED) Attribute name that contain the records. Usually it is the resource name pluralization.
 * **vField:**           (REQUIRED) Record attribute use to get option value.
@@ -108,7 +121,7 @@ git clone cenit-io/cenit-spreadsheet-converter-vhtml
         
             Name: scope 
             
-            Value: create {"namespace":"Setup", "name": "JsonDataType"} create {"namespace":"DataService"} read
+            Value: create read
 
 3. Generate token using the **Authorize** action.
 

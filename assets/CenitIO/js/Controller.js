@@ -293,42 +293,78 @@
         createSelectionBoxes: function (callback) {
             var token = (this.token || this.getToken()).trim(),
                 baUrl = this.baseApiUrl.trim().replace(/\/$/, ''),
-                selectionItems = Object.keys(this.selectionItems || {});
+                selectionItems = Object.keys(this.selectionItems || {}),
 
-            selectionItems.forEach(function (selItem, idx) {
-                var apiService = this.selectionItems[selItem].apiService,
-                    rField = this.selectionItems[selItem].rField,
-                    vField = this.selectionItems[selItem].vField,
-                    lField = this.selectionItems[selItem].lField;
-
-                this.getRecords(baUrl, token, apiService, function (err, data) {
-                    if (err) return callback(500, err, idx == selectionItems.length - 1);
-
+                create = function (selItem, idx, select2options) {
                     var $el = $("#{0}".format(selItem)),
                         $parent = $el.parent(),
-                        classes = $el.prop('class'),
-                        records = data[rField] || [],
-                        options = records.map(function (record) {
-                            return {
-                                id: record[vField],
-                                text: record[lField]
-                            }
-                        });
+                        classes = $el.prop('class');
 
                     $el.remove();
                     $parent.append('<select name="{0}" id="{0}" class="{1}"></select>'.format(selItem, classes));
 
-                    $("select#{0}".format(selItem)).select2({
-                        data: options
-                    });
+                    $("select#{0}".format(selItem)).select2(select2options);
 
                     if (idx == selectionItems.length - 1) callback(200, null, true);
-                });
+                };
 
+            selectionItems.forEach(function (selItem, idx) {
+                if (this.selectionItems[selItem].remote) {
+                    this.getRemoteOptions(baUrl, token, selItem, function (err, options) {
+                        if (err) return callback(500, err, idx == selectionItems.length - 1);
+                        create(selItem, idx, { data: options });
+                    });
+                } else {
+                    this.getStaticOptions(selItem, function (options) {
+                        create(selItem, idx, { data: options });
+                    });
+                }
             }, this);
+        },
+
+        getStaticOptions: function (selItem, callback) {
+            var options = (this.selectionItems[selItem].options || ['not-options']).map(function (o) {
+                if ($.isString(o) || $.isNumeric(o)) return { id: o, text: o };
+                if ($.isBoolean(o)) return { id: o, text: o ? 'true' : 'false' };
+                if ($.isPlainObject(o)) return {
+                    id: o.value == undefined ? o.id : o.value,
+                    text: o.label == undefined ? o.text : o.label
+                }
+            });
+
+            callback(options);
+        },
+
+        getRemoteOptions: function (baUrl, token, selItem, callback) {
+            var apiService = this.selectionItems[selItem].remote.apiService,
+                rField = this.selectionItems[selItem].remote.rField,
+                vField = this.selectionItems[selItem].remote.vField,
+                lField = this.selectionItems[selItem].remote.lField;
+
+            this.getRecords(baUrl, token, apiService, function (err, data) {
+                if (err) return callback(err);
+
+                var records = data[rField] || [],
+                    options = records.map(function (record) {
+                        return {
+                            id: record[vField],
+                            text: record[lField]
+                        }
+                    });
+
+                callback(null, options);
+            });
         }
 
     });
+
+    $.isString = function (v) {
+        return 'string' == typeof v
+    };
+
+    $.isBoolean = function (v) {
+        return 'boolean' == typeof v
+    };
 
     // Extending String class with format method.
     String.prototype.format = function () {
@@ -336,7 +372,6 @@
 
         return this.replace(/\{\d+\}/g, function (item) {
             var index = parseInt(item.substring(1, item.length - 1));
-
             return args[index];
         });
     };

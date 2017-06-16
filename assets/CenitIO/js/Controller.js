@@ -269,7 +269,7 @@
          * Prompt authorization token.
          */
         getToken: function () {
-            return prompt('Authorization token:');
+            return prompt('Authorization token:') || '';
         },
 
         startLoading: function () {

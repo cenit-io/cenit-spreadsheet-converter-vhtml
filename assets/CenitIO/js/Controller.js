@@ -51,7 +51,7 @@
          */
         saveDataInDataType: function (baUrl, token, dataType, formData, callback) {
             $.ajax({
-                url: '{0}/{1}/{2}.json'.format(baUrl, dataType.namespaceSlug, dataType.slug),
+                url: '{0}/{1}/{2}'.format(baUrl, dataType.namespaceSlug, dataType.slug),
                 headers: this.headers(token),
                 method: 'POST',
                 dataType: 'json',
@@ -66,7 +66,7 @@
                         status = 500;
                     } else {
                         msg = 'Data was successfully saved.';
-                        status = 422;
+                        status = 200;
                     }
 
                     callback(status, msg);
@@ -89,7 +89,7 @@
          */
         getDataType: function (baUrl, token, dtNamespace, dtName, callback) {
             $.ajax({
-                url: '{0}/setup/json_data_type.json'.format(baUrl),
+                url: '{0}/setup/json_data_type'.format(baUrl),
                 headers: this.headers(token),
                 method: 'GET',
                 dataType: 'json',
@@ -109,7 +109,7 @@
 
         getRecords: function (baUrl, token, apiService, callback) {
             $.ajax({
-                url: '{0}/{1}.json'.format(baUrl, apiService),
+                url: '{0}/{1}'.format(baUrl, apiService),
                 headers: this.headers(token),
                 method: 'GET',
                 dataType: 'json',
@@ -142,7 +142,7 @@
             var schema = this.parseJsonSchema(formData);
 
             $.ajax({
-                url: '{0}/setup/json_data_type.json'.format(baUrl),
+                url: '{0}/setup/json_data_type'.format(baUrl),
                 headers: this.headers(token),
                 method: 'POST',
                 dataType: 'json',
@@ -226,12 +226,12 @@
         validate: function (callback) {
             var errMsg = 'CenitIO.{0} is a required string, please set it to the CenitIO.js file.',
                 isValid = function (v) {
-                    return typeof v == 'String' && v.trim() != ''
+                    return typeof v == 'string' && v.trim() != ''
                 };
 
-            if (isValid(this.baseApiUrl)) return callback(errMsg.format('baseApiUrl'));
-            if (isValid(this.dtName)) return callback(errMsg.format('dtName'));
-            if (isValid(this.dtNamespace)) return callback(errMsg.format('dtNamespace'));
+            if (!isValid(this.baseApiUrl)) return callback(errMsg.format('baseApiUrl'));
+            if (!isValid(this.dtName)) return callback(errMsg.format('dtName'));
+            if (!isValid(this.dtNamespace)) return callback(errMsg.format('dtNamespace'));
 
             callback();
         },

@@ -47,7 +47,7 @@ git clone cenit-io/cenit-spreadsheet-converter-vhtml
       token: null,
       
       selectionItems: {                           
-          field_name_1: { 
+          field_id_1: { 
               remote: {
                   apiService: "data_service/data1",
                   rField: "data1s",
@@ -55,14 +55,14 @@ git clone cenit-io/cenit-spreadsheet-converter-vhtml
                   lField: "name"
               }
           },
-          field_name_2: {
+          field_id_2: {
               options: [                          
                   { value: 1, label: 'A' },
                   { value: 2, label: 'B' },
                   { value: 3, label: 'C' },
               ]
           },
-          field_name_3: {
+          field_id_3: {
               options: ['yes', 'no']
           }
       }
@@ -126,6 +126,8 @@ git clone cenit-io/cenit-spreadsheet-converter-vhtml
 3. Generate token using the **Authorize** action.
 
 4. Copy the **Access token** and set it in **assets/CenitIO/js/Config.js** of SpreadsheetConverter jQuery adaptor.
+
+**Note:** This token will be available for only one hour. After this time you need repeat step 3 and 4.
 
 ### Conclusion
 

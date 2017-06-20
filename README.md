@@ -11,7 +11,7 @@ your form to your CenitIO Tenant.
 1. Download the component from githup [cenit-io/cenit-spreadsheet-converter-vhtml](https://githup.com/cenit-io/cenit-spreadsheet-converter-vhtml) repository.
 
 ```sh
-git clone cenit-io/cenit-spreadsheet-converter-vhtml
+git clone https://github.com/cenit-io/cenit-spreadsheet-converter-vhtml
 ```
 
 2. Copy **assets/CenitIO** folder to **assets** folder in you application.

@@ -310,10 +310,7 @@
 
             selectionItems.forEach(function (selItem, idx) {
                 if (this.selectionItems[selItem].remote) {
-                    this.getRemoteOptions(baUrl, token, selItem, function (err, options) {
-                        if (err) return callback(500, err, idx == selectionItems.length - 1);
-                        create(selItem, idx, { data: options });
-                    });
+                    create(selItem, idx, this.getRemoteOptions(baUrl, token, selItem));
                 } else {
                     this.getStaticOptions(selItem, function (options) {
                         create(selItem, idx, { data: options });
@@ -335,27 +332,42 @@
             callback(options);
         },
 
-        getRemoteOptions: function (baUrl, token, selItem, callback) {
+        getRemoteOptions: function (baUrl, token, selItem) {
             var apiService = this.selectionItems[selItem].remote.apiService,
                 rField = this.selectionItems[selItem].remote.rField,
                 vField = this.selectionItems[selItem].remote.vField,
                 lField = this.selectionItems[selItem].remote.lField;
 
-            this.getRecords(baUrl, token, apiService, function (err, data) {
-                if (err) return callback(err);
-
-                var records = data[rField] || [],
-                    options = records.map(function (record) {
+            return {
+                ajax: {
+                    url: '{0}/{1}'.format(baUrl, apiService),
+                    headers: this.headers(token),
+                    method: 'GET',
+                    dataType: 'json',
+                    crossOrigin: true,
+                    delay: 250,
+                    data: function (params) {
+                        var filters = { page: params.page };
+                        filters[lField] = { "$regex": ".*" + params.term + ".*", "$options": 'i' };
+                        return filters;
+                    },
+                    processResults: function (data, params) {
+                        params.page = params.page || 1;
                         return {
-                            id: record[vField],
-                            text: record[lField]
-                        }
-                    });
-
-                callback(null, options);
-            });
+                            results: data[rField].map(function (item) {
+                                return { id: item[vField], text: item[lField] }
+                            }),
+                            pagination: {
+                                more: (params.page * 30) < data.count
+                            }
+                        };
+                    },
+                    cache: true
+                },
+                escapeMarkup: function (markup) { return markup; },
+                minimumInputLength: 1
+            };
         }
-
     });
 
     $.isString = function (v) {
@@ -402,7 +414,6 @@
     CenitIO.createSelectionBoxes(function (status, msg, finish) {
         if (msg) alert(msg);
         if (finish) CenitIO.stopLoading();
-
     });
 
 }(jQuery));

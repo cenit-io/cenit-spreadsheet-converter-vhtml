@@ -40,19 +40,19 @@ git clone https://github.com/cenit-io/cenit-spreadsheet-converter-vhtml
 
 ```javascript
   var CenitIO = {
-      baseApiUrl: "https://cenit.io/api/v2",
-      dtName: "combobox_test",
-      dtNamespace: "DataService",
+      baseApiUrl: 'https://cenit.io/api/v2',
+      dtName: 'combobox_test',
+      dtNamespace: 'DataService',
       dtNamespaceSlug: null,
       token: null,
       
       selectionItems: {                           
           field_id_1: { 
               remote: {
-                  apiService: "data_service/data1",
-                  rField: "data1s",
-                  vField: "id",
-                  lField: "name"
+                  apiService: 'data_service/data1',
+                  rField: 'data1s',
+                  vField: 'id',
+                  lField: 'name'
               }
           },
           field_id_2: {

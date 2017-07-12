@@ -1,6 +1,6 @@
 (function CenitIOStartup($) {
 
-    if (CenitIO == undefined) return setTimeout(CenitIOStartup, 10);
+    if (CenitIO == undefined) return setTimeout(CenitIOStartup, 10, $);
 
     $.extend(CenitIO, {
 

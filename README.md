@@ -31,6 +31,7 @@ git clone https://github.com/cenit-io/cenit-spreadsheet-converter-vhtml
   <link type="text/css" rel="stylesheet" href="assets/CenitIO/css/main.css"/>
   
   <script type="text/javascript" src="assets/CenitIO/js/select2.min.js"></script>
+  <script type="text/javascript" src="assets/CenitIO/js/signature_pad.min.js"></script>
   <script type="text/javascript" src="assets/CenitIO/js/Config.js"></script>
   <script type="text/javascript" src="assets/CenitIO/js/Controller.js"></script>
 </html>
@@ -93,7 +94,9 @@ git clone https://github.com/cenit-io/cenit-spreadsheet-converter-vhtml
 * **rField:**           (REQUIRED) Attribute name that contain the records. Usually it is the resource name pluralization.
 * **vField:**           (REQUIRED) Record attribute use to get option value.
 * **lField:**           (REQUIRED) Record attribute use to get option label.
-                             
+
+* **signatureItems:**   (OPTIONAL) Configuration of items that will be transformed in signature box components.
+                  
                              
 ### Get authorisation token from CenitIO:
 

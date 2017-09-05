@@ -19,11 +19,16 @@ var CenitIO = {
             options: [                              // OPTIONAL: Static options with value different to label.
                 { value: 1, label: 'A' },
                 { value: 2, label: 'B' },
-                { value: 3, label: 'C' },
+                { value: 3, label: 'C' }
             ]
         },
         XLEW_1_7_4: {
             options: ['yes', 'no']                  // OPTIONAL: Static options with value equal to label.
         }
-    }
+    },
+
+    signatureItems: [                               // OPTIONAL: Configuration of items that will be transformed in signature box components.
+        "XLEW_1_7_5",
+        "RevenueFourthInputNumber"
+    ]
 };

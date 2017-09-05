@@ -366,9 +366,82 @@
                     },
                     cache: true
                 },
-                escapeMarkup: function (markup) { return markup; },
+                escapeMarkup: function (markup) {
+                    return markup;
+                },
                 minimumInputLength: 1
             };
+        },
+
+        /**
+         * Create signature boxes.
+         */
+        createSignatureBoxes: function (callback) {
+            $('body').append(
+                '<div id="signature">' +
+                '<canvas/>' +
+                '<div class="actions">' +
+                '<button id="clear">Clear</button>' +
+                '<button id="cancel">Cancel</button>' +
+                '<button id="save">Save</button>' +
+                '</div>' +
+                '</div>'
+            );
+
+            var $signature = $('div#signature'),
+                $canvas = $('div#signature canvas'),
+                signaturePad = new SignaturePad($canvas[0]),
+                signatureItems = this.signatureItems || [];
+
+            $('#clear').on('click', function (e) {
+                signaturePad.clear();
+                e.preventDefault();
+            });
+
+            $('#cancel').on('click', function (e) {
+                $signature.hide();
+                e.preventDefault();
+            });
+
+            $('#save').on('click', function (e) {
+                var $img = $('img[data-field={0}]'.format(signaturePad.currentField)),
+                    $field = $('input[name={0}]'.format(signaturePad.currentField)),
+                    src = signaturePad.toDataURL("image/svg+xml");
+
+                $img.prop('src', src);
+                $field.val(src);
+                $signature.hide();
+                e.preventDefault();
+            });
+
+
+            signatureItems.forEach(function (field, idx) {
+                var $el = $("#{0}".format(field)),
+                    $parent = $el.parent(),
+                    classes = $el.prop('class'),
+                    ratio = Math.max(window.devicePixelRatio || 1, 1),
+                    $img, $field;
+
+                $el.remove();
+                $parent.append('<input name="{0}" id="{0}" type="hidden">'.format(field));
+                $parent.append('<img class="{1} signature" data-field="{0}"/>'.format(field, classes));
+
+                $img = $("img[data-field={0}]".format(field));
+                $field = $("input[name={0}]".format(field));
+
+                $img.on('click', function (e) {
+                    $signature.show();
+                    $signature.height($(window).height() * 0.8);
+                    $canvas[0].width = $canvas[0].offsetWidth * ratio;
+                    $canvas[0].height = $canvas[0].offsetHeight * ratio;
+                    $canvas[0].getContext("2d").scale(ratio, ratio);
+                    signaturePad.clear();
+                    signaturePad.currentField = $(this).data('field');
+                    signaturePad.fromDataURL($field.val());
+                });
+
+                if (idx == signatureItems.length - 1) callback(200, null, true);
+            }, this);
         }
     });
 
@@ -414,6 +487,13 @@
     // Create selection boxes.
     CenitIO.startLoading();
     CenitIO.createSelectionBoxes(function (status, msg, finish) {
+        if (msg) alert(msg);
+        if (finish) CenitIO.stopLoading();
+    });
+
+    // Create signature boxes.
+    CenitIO.startLoading();
+    CenitIO.createSignatureBoxes(function (status, msg, finish) {
         if (msg) alert(msg);
         if (finish) CenitIO.stopLoading();
     });

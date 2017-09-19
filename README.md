@@ -32,6 +32,7 @@ git clone https://github.com/cenit-io/cenit-spreadsheet-converter-vhtml
   
   <script type="text/javascript" src="assets/CenitIO/js/select2.min.js"></script>
   <script type="text/javascript" src="assets/CenitIO/js/signature_pad.min.js"></script>
+  <script type="text/javascript" src="assets/CenitIO/js/RecordRTC.js"></script>
   <script type="text/javascript" src="assets/CenitIO/js/Config.js"></script>
   <script type="text/javascript" src="assets/CenitIO/js/Controller.js"></script>
 </html>
@@ -66,6 +67,13 @@ git clone https://github.com/cenit-io/cenit-spreadsheet-converter-vhtml
           field_id_3: {
               options: [100, 200]
           }
+      },
+      
+      signatureItems: [ 'field_id_4', 'field_id_5' ],
+      videoItems: [ 'field_id_6', 'field_id_7' ],
+      videoOptions: {
+        aBitrate: 40960,                         //  40bits * 1024 = 40960bits  = 40Kbits
+        vBitrate: 409600                         // 400bits * 1024 = 409600bits = 400Kbits 
       }
   };
 ```
@@ -96,6 +104,11 @@ git clone https://github.com/cenit-io/cenit-spreadsheet-converter-vhtml
 * **lField:**           (REQUIRED) Record attribute use to get option label.
 
 * **signatureItems:**   (OPTIONAL) Configuration of items that will be transformed in signature box components.
+
+* **videoItems:**       (OPTIONAL) Configuration of items that will be transformed in video box components.
+
+* **aBitrate:**         (OPTIONAL) The chosen bitrate for the audio component of the media. (Default 40960)
+* **vBitrate:**         (OPTIONAL) The chosen bitrate for the video component of the media. (Default 409600)
                   
                              
 ### Get authorisation token from CenitIO:

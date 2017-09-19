@@ -381,9 +381,9 @@
                 '<div id="signature">' +
                 '<canvas/>' +
                 '<div class="actions">' +
-                '<button id="clear">Clear</button>' +
-                '<button id="cancel">Cancel</button>' +
-                '<button id="save">Save</button>' +
+                '<button class="clear">Clear</button>' +
+                '<button class="cancel">Cancel</button>' +
+                '<button class="save">Save</button>' +
                 '</div>' +
                 '</div>'
             );
@@ -393,17 +393,17 @@
                 signaturePad = new SignaturePad($canvas[0]),
                 signatureItems = this.signatureItems || [];
 
-            $('#clear').on('click', function (e) {
+            $('#signature .actions .clear').on('click', function (e) {
                 signaturePad.clear();
                 e.preventDefault();
             });
 
-            $('#cancel').on('click', function (e) {
+            $('#signature .actions .cancel').on('click', function (e) {
                 $signature.hide();
                 e.preventDefault();
             });
 
-            $('#save').on('click', function (e) {
+            $('#signature .actions .save').on('click', function (e) {
                 var $img = $('img[data-field={0}]'.format(signaturePad.currentField)),
                     $field = $('input[name={0}]'.format(signaturePad.currentField)),
                     src = signaturePad.toDataURL("image/svg+xml");
@@ -414,7 +414,6 @@
                 e.preventDefault();
             });
 
-
             signatureItems.forEach(function (field, idx) {
                 var $el = $("#{0}".format(field)),
                     $parent = $el.parent(),
@@ -424,7 +423,7 @@
 
                 $el.remove();
                 $parent.append('<input name="{0}" id="{0}" type="hidden">'.format(field));
-                $parent.append('<img class="{1} signature" data-field="{0}"/>'.format(field, classes));
+                $parent.append('<div class="{1} field"><img class="{1} signature" data-field="{0}"/></div>'.format(field, classes));
 
                 $img = $("img[data-field={0}]".format(field));
                 $field = $("input[name={0}]".format(field));
@@ -441,6 +440,120 @@
                 });
 
                 if (idx == signatureItems.length - 1) callback(200, null, true);
+            }, this);
+        },
+
+        /**
+         * Create video record boxes.
+         */
+        createVideoRecordBoxes: function (callback) {
+            $('body').append(
+                '<div id="dlg-video-record">' +
+                '<video controls="true" id="lll"></video>' +
+                '<div class="actions">' +
+                '<button class="record">Start recording</button>' +
+                '<button class="cancel">Cancel</button>' +
+                '<button class="save" disabled="true">Save</button>' +
+                '</div>' +
+                '</div>'
+            );
+
+            var $dlgVideoRecord = $('div#dlg-video-record'),
+                $video = $('div#dlg-video-record video'),
+                videoItems = this.videoItems || [],
+                mediaConstraints = { video: true, audio: true },
+                videoOptions = this.videoOptions || {},
+                recordRTC,
+
+                successCallback = function (stream) {
+                    // RecordRTC usage goes here
+                    var options = {
+                        recorderType: MediaStreamRecorder,
+                        mimeType: 'video/webm', // or video/webm\;codecs=h264 or video/webm\;codecs=vp9
+                        audioBitsPerSecond: videoOptions.aBitrate || 40 * 1024,
+                        videoBitsPerSecond: videoOptions.vBitrate || 400 * 1024,
+                    };
+
+                    if (recordRTC == undefined) {
+                        recordRTC = RecordRTC(stream, options);
+
+                        recordRTC.onStateChanged = function (state) {
+                            if (state == 'recording') {
+                                $('#dlg-video-record .actions .save').prop('disabled', true);
+                                $('#dlg-video-record .actions .record').html('Stop recording');
+
+                                $video[0].src = URL.createObjectURL(stream);
+                                $video[0].play();
+                            } else {
+                                recordRTC.getDataURL(function (dataURL) {
+                                    $video.prop('src', dataURL);
+                                });
+                                $video[0].pause();
+                                $('#dlg-video-record .actions .save').prop('disabled', false);
+                                $('#dlg-video-record .actions .record').html('Start recording');
+                            }
+                        };
+                    }
+                    recordRTC.startRecording();
+                },
+
+                errorCallback = function (error) {
+                    console.error(error);
+                    alert(error);
+                };
+
+            $('#dlg-video-record .actions .record').on('click', function (e) {
+                if (recordRTC && recordRTC.state == 'recording') {
+                    recordRTC.stopRecording();
+                } else {
+                    navigator.getUserMedia(mediaConstraints, successCallback, errorCallback);
+                }
+
+                e.preventDefault();
+            });
+
+            $('#dlg-video-record .actions .cancel').on('click', function (e) {
+                recordRTC && recordRTC && (recordRTC.state == 'recording') && recordRTC.stopRecording();
+                $dlgVideoRecord.hide();
+
+                e.preventDefault();
+            });
+
+            $('#dlg-video-record .actions .save').on('click', function (e) {
+                var $field = $('input[name={0}]'.format($dlgVideoRecord.currentField));
+
+                $field.val($video.prop('src'));
+                $dlgVideoRecord.hide();
+                e.preventDefault();
+            });
+
+            videoItems.forEach(function (field, idx) {
+                var $el = $("#{0}".format(field)),
+                    $parent = $el.parent(),
+                    classes = $el.prop('class'),
+                    $img, $field;
+
+                $el.remove();
+                $parent.append('<input name="{0}" id="{0}" type="hidden">'.format(field));
+                $parent.append('<div class="{1} field"><img class="video" data-field="{0}" src="assets/CenitIO/images/video.png"/></div>'.format(field, classes));
+
+                $img = $("img[data-field={0}]".format(field));
+                $field = $("input[name={0}]".format(field));
+
+                $img.on('click', function (e) {
+                    $dlgVideoRecord.show();
+
+                    $('#dlg-video-record .actions .record').prop('disabled', false);
+                    $('#dlg-video-record .actions .play').prop('disabled', true);
+                    $('#dlg-video-record .actions .stop').prop('disabled', true);
+                    $('#dlg-video-record .actions .save').prop('disabled', true);
+
+                    $dlgVideoRecord.height($(window).height() * 0.8);
+                    $dlgVideoRecord.currentField = $(this).data('field');
+                    $video.prop('src', $field.val());
+                });
+
+                if (idx == videoItems.length - 1) callback(200, null, true);
             }, this);
         }
     });
@@ -494,6 +607,13 @@
     // Create signature boxes.
     CenitIO.startLoading();
     CenitIO.createSignatureBoxes(function (status, msg, finish) {
+        if (msg) alert(msg);
+        if (finish) CenitIO.stopLoading();
+    });
+
+    // Create signature boxes.
+    CenitIO.startLoading();
+    CenitIO.createVideoRecordBoxes(function (status, msg, finish) {
         if (msg) alert(msg);
         if (finish) CenitIO.stopLoading();
     });

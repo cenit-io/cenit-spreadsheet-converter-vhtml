@@ -28,7 +28,15 @@ var CenitIO = {
     },
 
     signatureItems: [                               // OPTIONAL: Configuration of items that will be transformed in signature box components.
-        "XLEW_1_7_5",
+        "XLEW_1_7_5"
+    ],
+
+    videoItems: [                                   // OPTIONAL: Configuration of items that will be transformed in video record box components.
         "RevenueFourthInputNumber"
-    ]
+    ],
+
+    videoOptions: {
+        audioBitsPerSecond: 40960,                 // OPTIONAL: The chosen bitrate for the audio component of the media. (Default 40960)
+        videoBitsPerSecond: 409600                 // OPTIONAL: The chosen bitrate for the video component of the media. (Default 409600)
+    }
 };
